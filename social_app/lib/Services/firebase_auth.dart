@@ -3,17 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 class FirebaseAuthService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-  // Method to listen for auth state changes
-  void signedIn() {
-    _firebaseAuth.authStateChanges().listen((User? user) {
-      if (user == null) {
-        print('User is currently signed out!');
-      } else {
-        print('User is signed in!');
-      }
-    });
-  }
-
   // Method to create a user with email and password
   Future<bool> createUser(String emailAddress, String password) async {
     try {

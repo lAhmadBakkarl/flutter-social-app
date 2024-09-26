@@ -1,24 +1,68 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-
+import 'package:social_app/Constants/Constants.dart';
 import '../Constants/AppColors.dart';
-import '../Widgets/button.dart';
+import '../Widgets/social_button.dart';
 import '../Widgets/text_field.dart';
-import 'sign_in_screen.dart';
+import '../view_models/auth_view_model.dart';
 
 class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({Key? key}) : super(key: key);
+  final Function() onTap;
+  const SignUpScreen({super.key, required this.onTap});
 
   @override
   State<SignUpScreen> createState() => _SignUpScreenState();
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
+  final emailTextController = TextEditingController();
+  final confirmpasswordTextController = TextEditingController();
+  final passwordTextController = TextEditingController();
+  bool fieldsValidation() {
+    if (emailTextController.text.isNotEmpty &&
+        passwordTextController.text.isNotEmpty &&
+        confirmpasswordTextController.text.isNotEmpty) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  void signUp() async {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
+    if (fieldsValidation()) {
+      if (confirmpasswordTextController.text == passwordTextController.text) {
+        if (await AuthViewModel.signUp(
+            emailTextController.text, passwordTextController.text)) {
+          showSnackBar("Success", "Account created", true, 1);
+        } else {
+          if (context.mounted) {
+            Navigator.pop(context);
+          }
+          showSnackBar("Error", "Something went wrong", false, 2);
+        }
+      } else {
+        if (context.mounted) {
+          Navigator.pop(context);
+        }
+        showSnackBar("Error", "Passwords don't match", false, 2);
+      }
+    } else {
+      if (context.mounted) {
+        Navigator.pop(context);
+      }
+      showSnackBar("Error", "Please fill all the fields", false, 2);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final emailTextController = TextEditingController();
-    final confirmpasswordTextController = TextEditingController();
-    final passwordTextController = TextEditingController();
     return Scaffold(
       backgroundColor: AppColors.greyColor,
       body: SafeArea(
@@ -37,19 +81,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
 
                 //email textfield
-                SizedBox(height: 30),
+                const SizedBox(height: 30),
                 MyTextField(
                     controller: emailTextController,
                     hintText: "Enter your email",
                     obscureText: false),
                 //password textfield
-                SizedBox(height: 15),
+                const SizedBox(height: 15),
                 MyTextField(
                     controller: passwordTextController,
                     hintText: "Enter your password",
                     obscureText: true),
 
-                SizedBox(height: 15),
+                const SizedBox(height: 15),
                 //confirm password textfield
                 MyTextField(
                     controller: confirmpasswordTextController,
@@ -57,21 +101,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     obscureText: true),
 
                 //signup button
-                SizedBox(height: 15),
+                const SizedBox(height: 15),
                 Button(
                     text: "Sign Up",
                     color: AppColors.blueColor,
-                    onPressed: () {}),
+                    onPressed: signUp),
                 //not a member? register now
-                SizedBox(height: 15),
+                const SizedBox(height: 15),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Text("Already a member? "),
                     GestureDetector(
-                      onTap: () {
-                        Get.to(() => const SignInScreen());
-                      },
+                      onTap: widget.onTap,
                       child: const Text(
                         "Login now",
                         style: TextStyle(color: Colors.blue),

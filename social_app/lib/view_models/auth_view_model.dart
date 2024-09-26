@@ -4,7 +4,7 @@ import '../services/firebase_auth.dart';
 class AuthViewModel extends GetxController {
   static final FirebaseAuthService _firebaseAuthService = FirebaseAuthService();
 
-  void signOut() async {
+  static void signOut() async {
     await _firebaseAuthService.signOut();
   }
 

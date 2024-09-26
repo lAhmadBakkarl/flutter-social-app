@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:social_app/Constants/AppColors.dart';
-import 'package:social_app/Widgets/button.dart';
+import 'package:social_app/Constants/Constants.dart';
+import 'package:social_app/Widgets/social_button.dart';
 import 'package:social_app/Widgets/text_field.dart';
 
-import 'sign_up_screen.dart';
+import '../view_models/auth_view_model.dart';
 
 class SignInScreen extends StatefulWidget {
-  const SignInScreen({super.key});
+  final Function() onTap;
+  const SignInScreen({super.key, required this.onTap});
 
   @override
   State<SignInScreen> createState() => _SignInScreenState();
@@ -16,6 +17,31 @@ class SignInScreen extends StatefulWidget {
 class _SignInScreenState extends State<SignInScreen> {
   final emailTextController = TextEditingController();
   final passwordTextController = TextEditingController();
+
+  void signIn() async {
+    showDialog(
+        context: context,
+        builder: (context) => const Center(child: CircularProgressIndicator()));
+
+    if (emailTextController.text.isNotEmpty &&
+        passwordTextController.text.isNotEmpty) {
+      if (await AuthViewModel.signIn(
+          emailTextController.text, passwordTextController.text)) {
+        showSnackBar('Success', 'You are logged in successfully', true, 1);
+      } else {
+        showSnackBar('Error', 'Wrong email or password', false, 2);
+      }
+      if (context.mounted) {
+        Navigator.pop(context);
+      }
+    } else {
+      if (context.mounted) {
+        Navigator.pop(context);
+      }
+      showSnackBar('Error', 'Please fill all the fields', false, 2);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,7 +79,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 Button(
                     text: "Sign In",
                     color: AppColors.blueColor,
-                    onPressed: () {}),
+                    onPressed: signIn),
                 //not a member? register now
                 SizedBox(height: 15),
                 Row(
@@ -61,9 +87,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   children: [
                     const Text("Not a member? "),
                     GestureDetector(
-                      onTap: () {
-                        Get.to(const SignUpScreen());
-                      },
+                      onTap: widget.onTap,
                       child: const Text(
                         "Register now",
                         style: TextStyle(color: Colors.blue),

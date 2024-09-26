@@ -59,24 +59,16 @@ class _BottomBarPageState extends State<BottomBarPage> {
             onTap: _onItemTapped,
             type: BottomNavigationBarType.fixed,
             elevation: 0,
-            items: [
+            items: const [
               BottomNavigationBarItem(
                   label: '',
                   icon: Padding(
-                    padding: const EdgeInsets.only(top: 10),
-                    child: Image.asset(
-                      'images/todo1.png',
-                      height: 30,
-                      width: 30,
-                    ),
+                    padding: EdgeInsets.only(top: 10),
+                    child: Icon(Icons.home),
                   ),
                   activeIcon: Padding(
-                    padding: const EdgeInsets.only(top: 5),
-                    child: Image.asset(
-                      'images/todo1.png',
-                      height: 45,
-                      width: 45,
-                    ),
+                    padding: EdgeInsets.only(top: 5),
+                    child: Icon(Icons.home_filled),
                   )),
               // BottomNavigationBarItem(
               //     label: '',
@@ -117,21 +109,11 @@ class _BottomBarPageState extends State<BottomBarPage> {
               BottomNavigationBarItem(
                   label: '',
                   icon: Padding(
-                    padding: const EdgeInsets.only(top: 10),
-                    child: Image.asset(
-                      'images/todo2.png',
-                      height: 30,
-                      width: 30,
-                    ),
-                  ),
+                      padding: EdgeInsets.only(top: 10),
+                      child: Icon(Icons.ondemand_video)),
                   activeIcon: Padding(
-                    padding: const EdgeInsets.only(top: 5),
-                    child: Image.asset(
-                      'images/todo2.png',
-                      height: 45,
-                      width: 45,
-                    ),
-                  )),
+                      padding: EdgeInsets.only(top: 5),
+                      child: Icon(Icons.ondemand_video))),
             ],
           ),
         ]),

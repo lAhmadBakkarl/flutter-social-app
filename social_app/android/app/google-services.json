@@ -1,0 +1,67 @@
+{
+  "project_info": {
+    "project_number": "914742825475",
+    "project_id": "social-app-5c0ce",
+    "storage_bucket": "social-app-5c0ce.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:914742825475:android:49144db279efb282167436",
+        "android_client_info": {
+          "package_name": "com.bakka"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBSUgxNds-UDiwSiSIfQ_o8gDVqKkPpJ2Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:914742825475:android:022b228cd1ac7d94167436",
+        "android_client_info": {
+          "package_name": "com.bakkar.social"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBSUgxNds-UDiwSiSIfQ_o8gDVqKkPpJ2Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:914742825475:android:1ba4a24e6bc2212c167436",
+        "android_client_info": {
+          "package_name": "com.bakkar.socialApp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBSUgxNds-UDiwSiSIfQ_o8gDVqKkPpJ2Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
