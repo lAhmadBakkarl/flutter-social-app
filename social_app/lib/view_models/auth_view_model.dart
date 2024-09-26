@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:social_app/Models/firebase_response.dart';
 import '../services/firebase_auth.dart';
 
 class AuthViewModel extends GetxController {
@@ -8,15 +9,17 @@ class AuthViewModel extends GetxController {
     await _firebaseAuthService.signOut();
   }
 
-  static Future<bool> signIn(String emailAddress, String password) async {
+  static Future<myFirebaseResponse> signIn(
+      String emailAddress, String password) async {
     try {
-      if (await _firebaseAuthService.signIn(emailAddress, password)) {
-        return true;
-      }
-      return false;
+      final response = await _firebaseAuthService.signIn(
+        emailAddress,
+        password,
+      );
+      return response;
     } catch (e) {
       print(e);
-      return false;
+      return myFirebaseResponse(false, e.toString());
     }
   }
 

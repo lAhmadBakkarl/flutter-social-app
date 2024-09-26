@@ -28,35 +28,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   void signUp() async {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
-      },
-    );
     if (fieldsValidation()) {
       if (confirmpasswordTextController.text == passwordTextController.text) {
+        showLoader("Creating account...");
         if (await AuthViewModel.signUp(
             emailTextController.text, passwordTextController.text)) {
           showSnackBar("Success", "Account created", true, 1);
+          hideLoader();
         } else {
-          if (context.mounted) {
-            Navigator.pop(context);
-          }
+          hideLoader();
           showSnackBar("Error", "Something went wrong", false, 2);
         }
       } else {
-        if (context.mounted) {
-          Navigator.pop(context);
-        }
         showSnackBar("Error", "Passwords don't match", false, 2);
       }
     } else {
-      if (context.mounted) {
-        Navigator.pop(context);
-      }
       showSnackBar("Error", "Please fill all the fields", false, 2);
     }
   }
@@ -85,24 +71,27 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 MyTextField(
                     controller: emailTextController,
                     hintText: "Enter your email",
-                    obscureText: false),
+                    obscureText: false,
+                    isEnabled: true),
                 //password textfield
                 const SizedBox(height: 15),
                 MyTextField(
                     controller: passwordTextController,
                     hintText: "Enter your password",
-                    obscureText: true),
+                    obscureText: true,
+                    isEnabled: true),
 
                 const SizedBox(height: 15),
                 //confirm password textfield
                 MyTextField(
                     controller: confirmpasswordTextController,
                     hintText: "Re-enter your password",
-                    obscureText: true),
+                    obscureText: true,
+                    isEnabled: true),
 
                 //signup button
                 const SizedBox(height: 15),
-                Button(
+                myButton(
                     text: "Sign Up",
                     color: AppColors.blueColor,
                     onPressed: signUp),

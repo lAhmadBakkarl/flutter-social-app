@@ -1,0 +1,77 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:social_app/Models/my_user.dart';
+
+import '../Constants/Constants.dart';
+
+class FirestoreService {
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
+  static CollectionReference users =
+      FirebaseFirestore.instance.collection(usersCollection);
+
+  static Future<bool> createUser(String uid, String email) async {
+    try {
+      await users.doc(uid).set({
+        'uid': uid,
+        'email': email,
+      });
+
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  static Future<bool> updateUser(String uid, String name, String bio) async {
+    try {
+      await users.doc(uid).update({
+        'name': name,
+        'bio': bio,
+      });
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  static Future<bool> updateProfilePic(String uid, String profilePic) async {
+    try {
+      await users.doc(uid).update({
+        'profilePic': profilePic,
+      });
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  static Future<myUser?> fetchUserData(String uid) async {
+    try {
+      DocumentSnapshot userDocument = await users.doc(uid).get();
+      if (userDocument.exists) {
+        print("User exists : $userDocument");
+        return myUser.fromJson(userDocument.data() as Map<String, dynamic>);
+      } else {
+        print("User doesn't exist");
+        return null;
+      }
+    } catch (e) {
+      print(e);
+      return null;
+    }
+  }
+
+  static Future<void> updateUserProfile(
+      {required String uid, required String name, required String bio}) async {
+    try {
+      await users.doc(uid).update({
+        'name': name,
+        'bio': bio,
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+}

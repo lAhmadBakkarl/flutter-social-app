@@ -25,11 +25,12 @@ class _SignInScreenState extends State<SignInScreen> {
 
     if (emailTextController.text.isNotEmpty &&
         passwordTextController.text.isNotEmpty) {
-      if (await AuthViewModel.signIn(
-          emailTextController.text, passwordTextController.text)) {
-        showSnackBar('Success', 'You are logged in successfully', true, 1);
+      final response = await AuthViewModel.signIn(
+          emailTextController.text, passwordTextController.text);
+      if (response.success) {
+        showSnackBar('Success', 'You are logged in successfully', true, 3);
       } else {
-        showSnackBar('Error', 'Wrong email or password', false, 2);
+        showSnackBar('Error', response.message, false, 4);
       }
       if (context.mounted) {
         Navigator.pop(context);
@@ -38,7 +39,7 @@ class _SignInScreenState extends State<SignInScreen> {
       if (context.mounted) {
         Navigator.pop(context);
       }
-      showSnackBar('Error', 'Please fill all the fields', false, 2);
+      showSnackBar('Error', 'Please fill all the fields', false, 3);
     }
   }
 
@@ -64,19 +65,23 @@ class _SignInScreenState extends State<SignInScreen> {
                 //email textfield
                 SizedBox(height: 30),
                 MyTextField(
-                    controller: emailTextController,
-                    hintText: "Enter your email",
-                    obscureText: false),
+                  controller: emailTextController,
+                  hintText: "Enter your email",
+                  obscureText: false,
+                  isEnabled: true,
+                ),
                 //password textfield
                 SizedBox(height: 15),
                 MyTextField(
-                    controller: passwordTextController,
-                    hintText: "Enter your password",
-                    obscureText: true),
+                  controller: passwordTextController,
+                  hintText: "Enter your password",
+                  obscureText: true,
+                  isEnabled: true,
+                ),
 
                 //login button
                 SizedBox(height: 15),
-                Button(
+                myButton(
                     text: "Sign In",
                     color: AppColors.blueColor,
                     onPressed: signIn),
