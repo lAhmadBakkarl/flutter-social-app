@@ -2,11 +2,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:social_app/Models/my_user.dart';
 
 import '../Constants/Constants.dart';
+import '../Models/Post.dart';
 
 class FirestoreService {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   static CollectionReference users =
       FirebaseFirestore.instance.collection(usersCollection);
+
+  static CollectionReference posts =
+      FirebaseFirestore.instance.collection(postsCollection);
 
   static Future<bool> createUser(String uid, String email) async {
     try {
@@ -72,6 +76,27 @@ class FirestoreService {
       });
     } catch (e) {
       print(e);
+    }
+  }
+
+  static Future<void> createPost(Post post) async {
+    try {
+      await posts.doc(post.id).set(post.toJson());
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  static Future<List<Post>> fetchPosts() async {
+    try {
+      QuerySnapshot snapshot =
+          await posts.orderBy('date', descending: true).get();
+      return snapshot.docs
+          .map((e) => Post.fromJson(e.data() as Map<String, dynamic>))
+          .toList();
+    } catch (e) {
+      print(e);
+      return [];
     }
   }
 }

@@ -8,6 +8,7 @@ class Post {
   String? postPhoto;
   String? postVideo;
   String posterId;
+  String date;
 
   Post(
       {required this.id,
@@ -18,7 +19,8 @@ class Post {
       required this.commentsList,
       this.postPhoto,
       this.postVideo,
-      required this.posterId});
+      required this.posterId,
+      required this.date});
 
   factory Post.fromJson(Map<String, dynamic> json) {
     return Post(
@@ -30,7 +32,8 @@ class Post {
         commentsList: json['commentsList'] as List<String>,
         postPhoto: json['postPhoto'] as String?,
         postVideo: json['postVideo'] as String?,
-        posterId: json['posterId'] as String);
+        posterId: json['posterId'] as String,
+        date: json['date'] as String);
   }
 
   Map<String, dynamic> toJson() {
@@ -43,7 +46,8 @@ class Post {
       'commentsList': commentsList,
       'postPhoto': postPhoto,
       'postVideo': postVideo,
-      'posterId': posterId
+      'posterId': posterId,
+      'date': date
     };
   }
 }

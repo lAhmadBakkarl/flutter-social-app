@@ -1,9 +1,7 @@
-import 'Auth_user.dart';
-
 class myUser {
-  String? uid = AuthUser().uid;
+  String? uid;
   String? name;
-  String? email = AuthUser().email;
+  String email;
   String? bio;
   String? profilePic;
   int followers = 0;
@@ -14,7 +12,7 @@ class myUser {
 
   myUser({
     this.name,
-    this.email,
+    required this.email,
     this.uid,
     this.bio,
     this.profilePic,

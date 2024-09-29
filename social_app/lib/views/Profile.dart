@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:social_app/Constants/Constants.dart';
+import 'package:social_app/Models/my_user.dart';
 import 'package:social_app/Widgets/social_button.dart';
 import 'package:social_app/Widgets/text_field.dart';
 import 'package:social_app/view_models/profile_view_model.dart';
@@ -26,11 +28,21 @@ class _profilePageState extends State<profilePage> {
   bool isUploading = false;
   File? profilePic;
   final ImagePicker _picker = ImagePicker();
+  myUser? user;
 
   @override
   void initState() {
     super.initState();
-    profileController.fetchUserData();
+    fetchUser();
+  }
+
+  void fetchUser() async {
+    user = await profileController.fetchUserData();
+
+    setState(() {
+      user = user;
+    });
+    print(user);
   }
 
   void imagePicker() async {
@@ -68,6 +80,7 @@ class _profilePageState extends State<profilePage> {
   void saveUser(String? name, String? bio) async {
     try {
       await profileController.updateUser(name!, bio!);
+      showSnackBar("success", "updated", true, 2);
       print('Profile updated');
     } catch (e) {
       print(e);
@@ -76,12 +89,9 @@ class _profilePageState extends State<profilePage> {
 
   @override
   Widget build(BuildContext context) {
-    final emailTextFieldController =
-        TextEditingController(text: profileController.firebaseUser?.email);
-    final nameTextFieldController =
-        TextEditingController(text: profileController.firebaseUser?.name);
-    final bioTextFieldController =
-        TextEditingController(text: profileController.firebaseUser?.bio);
+    final emailTextFieldController = TextEditingController(text: user?.email);
+    final nameTextFieldController = TextEditingController(text: user?.name);
+    final bioTextFieldController = TextEditingController(text: user?.bio);
 
     return Scaffold(
       backgroundColor: AppColors.greyColor,
@@ -105,90 +115,97 @@ class _profilePageState extends State<profilePage> {
                       if (controller.firebaseUser == null) {
                         // showLoader('Fetching user data...');
                       }
-                      return Stack(
+                      return Column(
                         children: [
-                          controller.firebaseUser?.profilePic != null &&
-                                  controller
-                                      .firebaseUser!.profilePic!.isNotEmpty
-                              ? Container(
-                                  height: 200,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(100),
-                                    border: Border.all(
-                                      color: AppColors.greenColor,
-                                      width: 5,
-                                    ),
-                                  ),
-                                  child: ClipOval(
-                                    child: Image.network(
-                                      controller.firebaseUser!.profilePic!,
-                                      fit: BoxFit.cover,
-                                      width: 200,
+                          Stack(
+                            children: [
+                              controller.firebaseUser?.profilePic != null &&
+                                      controller
+                                          .firebaseUser!.profilePic!.isNotEmpty
+                                  ? Container(
                                       height: 200,
+                                      decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(100),
+                                        border: Border.all(
+                                          color: AppColors.greenColor,
+                                          width: 5,
+                                        ),
+                                      ),
+                                      child: ClipOval(
+                                        child: Image.network(
+                                          controller.firebaseUser!.profilePic!,
+                                          fit: BoxFit.cover,
+                                          width: 200,
+                                          height: 200,
+                                        ),
+                                      ),
+                                    )
+                                  : Container(
+                                      height: 200,
+                                      decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(100),
+                                        border: Border.all(
+                                          color: AppColors.greenColor,
+                                          width: 5,
+                                        ),
+                                      ),
+                                      child: const Icon(
+                                        Icons.person,
+                                        size: 200,
+                                      ),
                                     ),
+                              Positioned(
+                                bottom: 0,
+                                right: 0,
+                                child: IconButton(
+                                  icon: const Icon(
+                                    Icons.edit,
+                                    size: 30,
+                                    color: AppColors.darkGreyColor,
                                   ),
-                                )
-                              : Container(
-                                  height: 200,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(100),
-                                    border: Border.all(
-                                      color: AppColors.greenColor,
-                                      width: 5,
-                                    ),
-                                  ),
-                                  child: const Icon(
-                                    Icons.person,
-                                    size: 200,
-                                  ),
+                                  onPressed: imagePicker,
                                 ),
-                          Positioned(
-                            bottom: 0,
-                            right: 0,
-                            child: IconButton(
-                              icon: const Icon(
-                                Icons.edit,
-                                size: 30,
-                                color: AppColors.darkGreyColor,
                               ),
-                              onPressed: imagePicker,
-                            ),
+                            ],
                           ),
+                          const SizedBox(height: 20),
+                          MyTextField(
+                              controller: emailTextFieldController,
+                              hintText: "Email",
+                              obscureText: false,
+                              isEnabled: false),
+                          const SizedBox(height: 20),
+                          MyTextField(
+                              controller: nameTextFieldController,
+                              hintText: "Full Name",
+                              obscureText: false,
+                              isEnabled: true),
+                          const SizedBox(height: 20),
+                          MyTextField(
+                              controller: bioTextFieldController,
+                              hintText: "Bio",
+                              obscureText: false,
+                              isEnabled: true),
+                          const SizedBox(height: 20),
+                          myButton(
+                            text: "Save",
+                            color: AppColors.greenColor,
+                            onPressed: () => saveUser(
+                                nameTextFieldController.text,
+                                bioTextFieldController.text),
+                          ),
+                          if (isUploading)
+                            Center(
+                              child: LoadingAnimationWidget.staggeredDotsWave(
+                                color: AppColors.greenColor,
+                                size: 50,
+                              ),
+                            ),
                         ],
                       );
                     }),
-                const SizedBox(height: 20),
-                MyTextField(
-                    controller: emailTextFieldController,
-                    hintText: "Email",
-                    obscureText: false,
-                    isEnabled: false),
-                const SizedBox(height: 20),
-                MyTextField(
-                    controller: nameTextFieldController,
-                    hintText: "Full Name",
-                    obscureText: false,
-                    isEnabled: true),
-                const SizedBox(height: 20),
-                MyTextField(
-                    controller: bioTextFieldController,
-                    hintText: "Bio",
-                    obscureText: false,
-                    isEnabled: true),
-                const SizedBox(height: 20),
-                myButton(
-                  text: "Save",
-                  color: AppColors.greenColor,
-                  onPressed: () => saveUser(nameTextFieldController.text,
-                      bioTextFieldController.text),
-                ),
-                if (isUploading)
-                  Center(
-                    child: LoadingAnimationWidget.staggeredDotsWave(
-                      color: AppColors.greenColor,
-                      size: 50,
-                    ),
-                  ),
               ],
             ),
           ),

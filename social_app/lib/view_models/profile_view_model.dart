@@ -14,7 +14,7 @@ class ProfileViewModel extends GetxController {
   Future<UploadResponse> updateProfilePic(File? imageFile) async {
     String? imageUrl;
     if (imageFile != null) {
-      imageUrl = await ImageUpload.uploadImage(imageFile);
+      imageUrl = await FileUpload.uploadFile(imageFile);
     }
     try {
       await FirestoreService.updateProfilePic(authUser.uid, imageUrl!);
@@ -38,6 +38,7 @@ class ProfileViewModel extends GetxController {
 
       if (firebaseUser != null) {
         print("User fetched: ${firebaseUser!.name}");
+        refresh();
         update();
         return firebaseUser;
       }

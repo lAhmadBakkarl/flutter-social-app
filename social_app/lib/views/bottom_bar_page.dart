@@ -4,8 +4,6 @@ import 'package:social_app/views/home.dart';
 
 // ignore: must_be_immutable
 class BottomBarPage extends StatefulWidget {
-  @override
-  // ignore: override_on_non_overriding_member
   int selectedIndex = 0;
 
   BottomBarPage(this.selectedIndex, {super.key});
@@ -43,7 +41,7 @@ class _BottomBarPageState extends State<BottomBarPage> {
       extendBody: true,
       // backgroundColor: Colors.transparent,
       bottomNavigationBar: Container(
-        height: 90,
+        height: 70,
         clipBehavior: Clip.hardEdge,
         decoration: const BoxDecoration(
           color: AppColors.blueColor,
@@ -52,71 +50,69 @@ class _BottomBarPageState extends State<BottomBarPage> {
             topRight: Radius.circular(40),
           ),
         ),
-        child: Wrap(children: [
-          BottomNavigationBar(
-            currentIndex: _selectedIndex,
-            selectedItemColor: AppColors.redColor,
-            onTap: _onItemTapped,
-            type: BottomNavigationBarType.fixed,
-            elevation: 0,
-            items: const [
-              BottomNavigationBarItem(
-                  label: '',
-                  icon: Padding(
+        child: BottomNavigationBar(
+          currentIndex: _selectedIndex,
+          selectedItemColor: AppColors.greenColor,
+          onTap: _onItemTapped,
+          type: BottomNavigationBarType.fixed,
+          elevation: 0,
+          items: const [
+            BottomNavigationBarItem(
+                label: '',
+                icon: Padding(
+                  padding: EdgeInsets.only(top: 10),
+                  child: Icon(Icons.home),
+                ),
+                activeIcon: Padding(
+                  padding: EdgeInsets.only(top: 5),
+                  child: Icon(Icons.home_filled),
+                )),
+            BottomNavigationBarItem(
+                label: '',
+                icon: Padding(
                     padding: EdgeInsets.only(top: 10),
-                    child: Icon(Icons.home),
-                  ),
-                  activeIcon: Padding(
+                    child: Icon(Icons.ondemand_video)),
+                activeIcon: Padding(
                     padding: EdgeInsets.only(top: 5),
-                    child: Icon(Icons.home_filled),
-                  )),
-              // BottomNavigationBarItem(
-              //     label: '',
-              //     icon: Padding(
-              //       padding: EdgeInsets.only(top: 10),
-              //       child: Image.asset(
-              //         'images/fav.png',
-              //         height: 30,
-              //         width: 30,
-              //       ),
-              //     ),
-              //     activeIcon: Padding(
-              //       padding: EdgeInsets.only(top: 5),
-              //       child: Image.asset(
-              //         'images/favactive.png',
-              //         height: 45,
-              //         width: 45,
-              //       ),
-              //     )),
-              // BottomNavigationBarItem(
-              //     label: '',
-              //     icon: Padding(
-              //       padding: EdgeInsets.only(top: 10),
-              //       child: Image.asset(
-              //         'images/cart.png',
-              //         height: 30,
-              //         width: 30,
-              //       ),
-              //     ),
-              //     activeIcon: Padding(
-              //       padding: EdgeInsets.only(top: 5),
-              //       child: Image.asset(
-              //         'images/cartactive.png',
-              //         height: 45,
-              //         width: 45,
-              //       ),
-              //     )),
-              BottomNavigationBarItem(
-                  label: '',
-                  icon: Padding(
-                      padding: EdgeInsets.only(top: 10),
-                      child: Icon(Icons.ondemand_video)),
-                  activeIcon: Padding(
-                      padding: EdgeInsets.only(top: 5),
-                      child: Icon(Icons.ondemand_video))),
-            ],
-          ),
-        ]),
+                    child: Icon(Icons.ondemand_video))),
+            // BottomNavigationBarItem(
+            //     label: '',
+            //     icon: Padding(
+            //       padding: EdgeInsets.only(top: 10),
+            //       child: Image.asset(
+            //         'images/fav.png',
+            //         height: 30,
+            //         width: 30,
+            //       ),
+            //     ),
+            //     activeIcon: Padding(
+            //       padding: EdgeInsets.only(top: 5),
+            //       child: Image.asset(
+            //         'images/favactive.png',
+            //         height: 45,
+            //         width: 45,
+            //       ),
+            //     )),
+            // BottomNavigationBarItem(
+            //     label: '',
+            //     icon: Padding(
+            //       padding: EdgeInsets.only(top: 10),
+            //       child: Image.asset(
+            //         'images/cart.png',
+            //         height: 30,
+            //         width: 30,
+            //       ),
+            //     ),
+            //     activeIcon: Padding(
+            //       padding: EdgeInsets.only(top: 5),
+            //       child: Image.asset(
+            //         'images/cartactive.png',
+            //         height: 45,
+            //         width: 45,
+            //       ),
+            //     )),
+          ],
+        ),
       ),
     );
   }

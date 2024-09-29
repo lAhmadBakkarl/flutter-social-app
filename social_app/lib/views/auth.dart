@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'home.dart';
+import 'package:social_app/views/bottom_bar_page.dart';
 import 'login_or_logup.dart';
 
 class Auth extends StatelessWidget {
@@ -13,7 +13,8 @@ class Auth extends StatelessWidget {
           stream: FirebaseAuth.instance.authStateChanges(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              return const Home();
+              // return const Home();
+              return BottomBarPage(0);
             } else {
               return const LoginOrLogup();
             }

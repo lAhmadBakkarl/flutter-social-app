@@ -19,8 +19,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Auth(),
+      home: const Auth(),
       builder: EasyLoading.init(),
     );
   }
