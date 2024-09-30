@@ -20,47 +20,51 @@ class PostTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double availableWidth = MediaQuery.sizeOf(context).width - 20;
     return Card(
         child: Column(
       children: [
         Row(children: [
-          if (user != null &&
-              user!.profilePic != null &&
-              user!.profilePic!.isNotEmpty)
-            ClipOval(
-              child: Image.network(
-                user!.profilePic!,
-                fit: BoxFit.cover,
-                width: 50,
-                height: 50,
-              ),
-            )
-          else
-            const Icon(
+          // if (user != null &&
+          //     user!.profilePic != null &&
+          //     user!.profilePic!.isNotEmpty)
+          //   ClipOval(
+          //     child: Image.network(
+          //       user!.profilePic!,
+          //       fit: BoxFit.cover,
+          //       width: 50,
+          //       height: 50,
+          //     ),
+          //   )
+          // else
+          Container(
+            width: availableWidth * 0.15,
+            child: const Icon(
               Icons.person,
               size: 50,
             ),
-          const SizedBox(
-            width: 10,
           ),
-          Text(post.posterId),
-          user!.followingList.contains(post.posterId)
-              ? const Icon(Icons.check_box, color: Colors.green)
-              : IconButton(
-                  onPressed: onFollow, icon: Icon(Icons.add_box_rounded)),
-          const SizedBox(width: 60),
-          Text(post.date),
+
+          Container(
+              width: availableWidth * 0.6,
+              child: Row(
+                children: [
+                  Text(post.posterId),
+                  user!.followingList.contains(post.posterId)
+                      ? const Icon(Icons.check_box, color: Colors.green)
+                      : IconButton(
+                          onPressed: onFollow,
+                          icon: Icon(Icons.add_box_rounded)),
+                ],
+              )),
+          Container(width: availableWidth * 0.2, child: Text(post.date)),
         ]),
-        const SizedBox(
-          height: 10,
-        ),
-        //make the text to the left, not centered
         Row(
           children: [
             const SizedBox(
               width: 10,
             ),
-            Text(post.text ?? 'No content'),
+            Text(post.text ?? ''),
           ],
         ),
 
@@ -98,7 +102,7 @@ class PostTile extends StatelessWidget {
                   Icons.favorite,
                   color: Colors.red,
                 )),
-            Text(post.likes.toString()),
+            Text(post.likesList.length.toString()),
             const SizedBox(
               width: 200,
             ),
@@ -108,9 +112,20 @@ class PostTile extends StatelessWidget {
                   Icons.comment,
                   color: AppColors.blackColor,
                 )),
-            Text(post.comments.toString()),
+            Text(post.commentsList.length.toString()),
           ],
-        )
+        ),
+        //ListView to list the comments
+        if (post.commentsList.isNotEmpty) const Divider(),
+        ListView.builder(
+            shrinkWrap: true,
+            itemCount: post.commentsList.length,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.only(left: 10, bottom: 10),
+                child: Text(post.commentsList[index]),
+              );
+            }),
       ],
     ));
   }

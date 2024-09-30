@@ -22,7 +22,7 @@ class _profilePageState extends State<profilePage> {
           ? Get.find<ProfileViewModel>()
           : Get.put(ProfileViewModel());
 
-  bool isUploading = false;
+  var isUploading = false.obs;
   File? profilePic;
   final ImagePicker _picker = ImagePicker();
 
@@ -36,25 +36,20 @@ class _profilePageState extends State<profilePage> {
     try {
       final pickedImage = await _picker.pickImage(source: ImageSource.gallery);
       if (pickedImage != null) {
-        setState(() {
-          isUploading = true;
-        });
+        isUploading.value = true;
 
         try {
           final response =
               await profileController.updateProfilePic(File(pickedImage.path));
-
           if (response.success) {
-            print('Image uploaded successfully:');
+            print('Image uploaded successfully');
           } else {
             print('Upload failed');
           }
         } catch (e) {
           print('Error during upload: $e');
         } finally {
-          setState(() {
-            isUploading = false;
-          });
+          isUploading.value = false;
         }
       } else {
         print('No image selected.');
@@ -181,13 +176,16 @@ class _profilePageState extends State<profilePage> {
                     onPressed: () => saveUser(nameTextFieldController.text,
                         bioTextFieldController.text),
                   ),
-                  if (isUploading)
-                    Center(
-                      child: LoadingAnimationWidget.staggeredDotsWave(
-                        color: AppColors.greenColor,
-                        size: 50,
-                      ),
-                    ),
+                  Obx(() {
+                    return isUploading.value
+                        ? Center(
+                            child: LoadingAnimationWidget.staggeredDotsWave(
+                              color: AppColors.greenColor,
+                              size: 50,
+                            ),
+                          )
+                        : Container();
+                  }),
                 ],
               );
             }),

@@ -12,8 +12,9 @@ class HomeViewModel extends GetxController {
   var posts = <Post>[].obs;
   var allPosts = <Post>[].obs;
   final String formattedDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
-  var likes = 0.obs;
+  var isliked = false.obs;
   var likesList = <String>[].obs;
+  var commentsList = <String>[].obs;
 
   @override
   void onInit() {
@@ -69,7 +70,9 @@ class HomeViewModel extends GetxController {
       );
 
       await FirestoreService.createPost(newPost);
-      posts.add(newPost); // Automatically triggers UI update
+      posts.add(newPost);
+      posts.refresh();
+      allPosts.refresh();
     } catch (e) {
       print(e);
     }
@@ -79,6 +82,8 @@ class HomeViewModel extends GetxController {
     try {
       final fetchedPosts = await FirestoreService.fetchPosts(followingList);
       posts.assignAll(fetchedPosts);
+      posts.refresh();
+      allPosts.refresh();
     } catch (e) {
       print(e);
     }
@@ -87,8 +92,8 @@ class HomeViewModel extends GetxController {
   Future<void> likePost(Post post, AuthUser user) async {
     try {
       await FirestoreService.likePost(post, user);
-      post.likes = post.likes + 1;
       post.likesList.add(user.email);
+      isliked.value = true;
       posts.refresh();
       allPosts.refresh();
     } catch (e) {
@@ -99,8 +104,8 @@ class HomeViewModel extends GetxController {
   Future<void> unlikePost(Post post, AuthUser user) async {
     try {
       await FirestoreService.unlikePost(post, user);
-      post.likes = post.likes - 1;
       post.likesList.remove(user.email);
+      isliked.value = false;
       posts.refresh();
       allPosts.refresh();
     } catch (e) {
@@ -114,6 +119,17 @@ class HomeViewModel extends GetxController {
       allPosts.assignAll(fetchedPosts);
     } catch (e) {
       print(e);
+    }
+  }
+
+  Future<void> commentPost(Post post, AuthUser authUser, String text) async {
+    try {
+      await FirestoreService.commentPost(post, authUser, text);
+      posts.refresh();
+      allPosts.refresh();
+    } catch (e) {
+      print(e);
+      return Future.error(e);
     }
   }
 }

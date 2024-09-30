@@ -9,6 +9,7 @@ import '../helpers/image_upload.dart';
 class ProfileViewModel extends GetxController {
   var firebaseUser = myUser().obs;
   final AuthUser authUser = AuthUser();
+  var isUploading = false.obs;
 
   @override
   void onInit() {
@@ -16,15 +17,18 @@ class ProfileViewModel extends GetxController {
     super.onInit();
   }
 
-  // Function to upload profile picture
   Future<UploadResponse> updateProfilePic(File? imageFile) async {
     String? imageUrl;
     if (imageFile != null) {
+      isUploading.value = true;
       imageUrl = await FileUpload.uploadFile(imageFile);
+      isUploading.value = false;
     }
     try {
       await FirestoreService.updateProfilePic(authUser.uid, imageUrl!);
-      fetchUserData(); // Fetch updated user data after profile picture is uploaded
+      firebaseUser.update((user) {
+        user?.profilePic = imageUrl;
+      });
       return UploadResponse(success: true, message: imageUrl);
     } catch (e) {
       print(e);
@@ -32,11 +36,12 @@ class ProfileViewModel extends GetxController {
     }
   }
 
-  // Function to fetch user data
   Future<void> fetchUserData() async {
     try {
       final fetchedUser = await FirestoreService.fetchUserData(authUser.uid);
-      firebaseUser.value = fetchedUser!;
+      if (fetchedUser != null) {
+        firebaseUser.value = fetchedUser;
+      }
     } catch (e) {
       print("Error fetching user data: $e");
     }
@@ -46,9 +51,10 @@ class ProfileViewModel extends GetxController {
     try {
       await FirestoreService.updateUserProfile(
           uid: authUser.uid, name: name, bio: bio);
-      firebaseUser.value.name = name;
-      firebaseUser.value.bio = bio;
-      update();
+      firebaseUser.update((user) {
+        user?.name = name;
+        user?.bio = bio;
+      });
       return true;
     } catch (e) {
       print("Error updating user data: $e");
@@ -56,11 +62,12 @@ class ProfileViewModel extends GetxController {
     }
   }
 
-  void followUser(posterId, posterUid) async {
+  void followUser(String posterId, String posterUid) async {
     try {
       await FirestoreService.followUser(
           authUser.uid, authUser.email, posterId, posterUid);
-      update();
+      // Optionally update the local user data after the follow
+      fetchUserData();
     } catch (e) {
       print("Error following user: $e");
     }

@@ -115,7 +115,6 @@ class FirestoreService {
   static Future<void> likePost(Post post, AuthUser user) async {
     try {
       await posts.doc(post.id).update({
-        'likes': post.likes + 1,
         'likesList': FieldValue.arrayUnion([user.email]),
       });
     } catch (e) {
@@ -138,11 +137,23 @@ class FirestoreService {
   static unlikePost(Post post, AuthUser user) {
     try {
       posts.doc(post.id).update({
-        'likes': post.likes - 1,
         'likesList': FieldValue.arrayRemove([user.email]),
       });
     } catch (e) {
       print(e);
+    }
+  }
+
+  static Future<void> commentPost(
+      Post post, AuthUser authUser, String comment) {
+    try {
+      posts.doc(post.id).update({
+        'commentsList': FieldValue.arrayUnion([comment]),
+      });
+      return Future.value();
+    } catch (e) {
+      print(e);
+      return Future.error(e);
     }
   }
 }

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:social_app/Constants/AppColors.dart';
+import 'package:social_app/Constants/Constants.dart';
 import 'package:social_app/Models/auth_user.dart';
 import 'package:social_app/Widgets/post.dart';
 import 'package:social_app/Widgets/text_field.dart';
@@ -16,8 +18,9 @@ class Home extends StatelessWidget {
   final HomeViewModel homeController = Get.put(HomeViewModel());
   final ProfileViewModel profileController = Get.put(ProfileViewModel());
   final TextEditingController createPostText = TextEditingController();
+  final TextEditingController commentText = TextEditingController();
   final AuthUser authUser = AuthUser();
-  final ImagePicker _picker = ImagePicker();
+  final ImagePicker picker = ImagePicker();
   XFile? _pickedImage;
 
   Home({super.key});
@@ -26,12 +29,14 @@ class Home extends StatelessWidget {
     AuthViewModel.signOut();
   }
 
-  void imagePicker() async {
+  void showCommentPopup() {}
+
+  void imagePick() async {
     try {
-      final pickedImage = await _picker.pickImage(source: ImageSource.gallery);
-      if (pickedImage != null) {
+      final pickedPic = await picker.pickImage(source: ImageSource.gallery);
+      if (pickedPic != null) {
         try {
-          _pickedImage = pickedImage;
+          _pickedImage = pickedPic;
         } catch (e) {
           print('Error during upload: $e');
           return null;
@@ -82,7 +87,7 @@ class Home extends StatelessWidget {
                   isEnabled: true,
                 ),
               ),
-              IconButton(onPressed: imagePicker, icon: const Icon(Icons.image)),
+              IconButton(onPressed: imagePick, icon: const Icon(Icons.image)),
               IconButton(
                 onPressed: () {
                   homeController.createPost(
@@ -92,6 +97,10 @@ class Home extends StatelessWidget {
                     authUser.email,
                     authUser.uid,
                   );
+                  createPostText.clear();
+                  _pickedImage = null;
+                  FocusScope.of(context).unfocus();
+                  showSnackBar("Success", "Post created", true, 3);
                 },
                 icon: const Icon(Icons.send),
               ),
@@ -125,7 +134,35 @@ class Home extends StatelessWidget {
                           homeController.likePost(post, AuthUser());
                         }
                       },
-                      onComment: () {},
+                      onComment: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: const Text("Comment"),
+                            content: TextField(
+                              controller: commentText,
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  commentText.clear();
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text("Cancel"),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  homeController.commentPost(
+                                      post, AuthUser(), commentText.text);
+                                  commentText.clear();
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text("Comment"),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
                     );
                   },
                 ),
