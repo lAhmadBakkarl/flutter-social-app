@@ -12,6 +12,8 @@ class HomeViewModel extends GetxController {
   var posts = <Post>[].obs;
   var allPosts = <Post>[].obs;
   final String formattedDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
+  var likes = 0.obs;
+  var likesList = <String>[].obs;
 
   @override
   void onInit() {
@@ -85,7 +87,22 @@ class HomeViewModel extends GetxController {
   Future<void> likePost(Post post, AuthUser user) async {
     try {
       await FirestoreService.likePost(post, user);
-      update();
+      post.likes = post.likes + 1;
+      post.likesList.add(user.email);
+      posts.refresh();
+      allPosts.refresh();
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> unlikePost(Post post, AuthUser user) async {
+    try {
+      await FirestoreService.unlikePost(post, user);
+      post.likes = post.likes - 1;
+      post.likesList.remove(user.email);
+      posts.refresh();
+      allPosts.refresh();
     } catch (e) {
       print(e);
     }

@@ -63,12 +63,20 @@ class FollowingPage extends StatelessWidget {
                     final post = homeController.posts[index];
                     final user = profileController.firebaseUser.value;
                     return PostTile(
-                        post: post,
-                        user: user,
-                        onFollow: () async {
-                          profileController.followUser(
-                              post.posterId, post.posterUid);
-                        });
+                      post: post,
+                      user: user,
+                      onFollow: () async {
+                        profileController.followUser(
+                            post.posterId, post.posterUid);
+                      },
+                      onLike: () {
+                        if (post.likesList.contains(AuthUser().email)) {
+                          homeController.unlikePost(post, AuthUser());
+                        } else {
+                          homeController.likePost(post, AuthUser());
+                        }
+                      },
+                    );
                   },
                 ),
               ),

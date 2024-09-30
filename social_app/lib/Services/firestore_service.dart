@@ -134,4 +134,15 @@ class FirestoreService {
       return [];
     }
   }
+
+  static unlikePost(Post post, AuthUser user) {
+    try {
+      posts.doc(post.id).update({
+        'likes': post.likes - 1,
+        'likesList': FieldValue.arrayRemove([user.email]),
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
 }

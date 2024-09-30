@@ -97,7 +97,6 @@ class Home extends StatelessWidget {
               ),
             ],
           ),
-          // Wrap only the part of the UI that reacts to changes in `posts`
           Obx(() {
             if (homeController.allPosts.isEmpty) {
               return const Center(child: CircularProgressIndicator());
@@ -119,7 +118,13 @@ class Home extends StatelessWidget {
                         profileController.followUser(
                             post.posterId, post.posterUid);
                       },
-                      onLike: () => homeController.likePost(post, AuthUser()),
+                      onLike: () {
+                        if (post.likesList.contains(AuthUser().email)) {
+                          homeController.unlikePost(post, AuthUser());
+                        } else {
+                          homeController.likePost(post, AuthUser());
+                        }
+                      },
                       onComment: () {},
                     );
                   },
