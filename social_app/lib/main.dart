@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:social_app/firebase_options.dart';
+import 'package:social_app/view_models/home_view_model.dart';
+import 'package:social_app/view_models/profile_view_model.dart';
 import 'package:social_app/views/auth.dart';
 
 void main() async {
@@ -10,6 +12,8 @@ void main() async {
   await Firebase.initializeApp(
     options: firebaseConfig,
   );
+  Get.put(ProfileViewModel());
+  Get.put(HomeViewModel());
   runApp(const MyApp());
 }
 

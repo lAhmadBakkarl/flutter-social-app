@@ -1,7 +1,7 @@
 class myUser {
   String? uid;
   String? name;
-  String email;
+  String? email;
   String? bio;
   String? profilePic;
   int followers = 0;
@@ -12,7 +12,7 @@ class myUser {
 
   myUser({
     this.name,
-    required this.email,
+    this.email,
     this.uid,
     this.bio,
     this.profilePic,

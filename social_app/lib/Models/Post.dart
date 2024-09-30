@@ -8,6 +8,7 @@ class Post {
   String? postPhoto;
   String? postVideo;
   String posterId;
+  String posterUid;
   String date;
 
   Post(
@@ -19,21 +20,24 @@ class Post {
       required this.commentsList,
       this.postPhoto,
       this.postVideo,
+      required this.posterUid,
       required this.posterId,
       required this.date});
 
   factory Post.fromJson(Map<String, dynamic> json) {
     return Post(
-        id: json['id'] as String,
-        text: json['text'] as String,
-        likes: json['likes'] as int,
-        likesList: json['likesList'] as List<String>,
-        comments: json['comments'] as int,
-        commentsList: json['commentsList'] as List<String>,
-        postPhoto: json['postPhoto'] as String?,
-        postVideo: json['postVideo'] as String?,
-        posterId: json['posterId'] as String,
-        date: json['date'] as String);
+      id: json['id'] as String,
+      text: json['text'] as String,
+      likes: json['likes'] as int,
+      comments: json['comments'] as int,
+      postPhoto: json['postPhoto'] as String?,
+      postVideo: json['postVideo'] as String?,
+      posterId: json['posterId'] as String,
+      date: json['date'] as String,
+      posterUid: json['posterUid'] as String,
+      likesList: (json['likesList'] as List<dynamic>).cast<String>(),
+      commentsList: (json['commentsList'] as List<dynamic>).cast<String>(),
+    );
   }
 
   Map<String, dynamic> toJson() {
@@ -47,6 +51,7 @@ class Post {
       'postPhoto': postPhoto,
       'postVideo': postVideo,
       'posterId': posterId,
+      'posterUid': posterUid,
       'date': date
     };
   }

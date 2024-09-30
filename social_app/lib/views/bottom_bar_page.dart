@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:social_app/Constants/AppColors.dart';
+import 'package:social_app/views/following_page.dart';
 import 'package:social_app/views/home.dart';
 
 // ignore: must_be_immutable
@@ -15,10 +16,7 @@ class BottomBarPage extends StatefulWidget {
 
 class _BottomBarPageState extends State<BottomBarPage> {
   int _selectedIndex = 0;
-  final screens = [
-    const Home(),
-    // const TodoListScreen(),
-  ];
+  final screens = [Home(), FollowingPage()];
 
   @override
   void initState() {
@@ -71,10 +69,10 @@ class _BottomBarPageState extends State<BottomBarPage> {
                 label: '',
                 icon: Padding(
                     padding: EdgeInsets.only(top: 10),
-                    child: Icon(Icons.ondemand_video)),
+                    child: Icon(Icons.man_2_outlined)),
                 activeIcon: Padding(
                     padding: EdgeInsets.only(top: 5),
-                    child: Icon(Icons.ondemand_video))),
+                    child: Icon(Icons.man_2_outlined))),
             // BottomNavigationBarItem(
             //     label: '',
             //     icon: Padding(

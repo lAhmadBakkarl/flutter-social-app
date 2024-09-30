@@ -7,8 +7,14 @@ import '../Services/firestore_service.dart';
 import '../helpers/image_upload.dart';
 
 class ProfileViewModel extends GetxController {
-  myUser? firebaseUser;
-  AuthUser authUser = AuthUser();
+  var firebaseUser = myUser().obs;
+  final AuthUser authUser = AuthUser();
+
+  @override
+  void onInit() {
+    fetchUserData();
+    super.onInit();
+  }
 
   // Function to upload profile picture
   Future<UploadResponse> updateProfilePic(File? imageFile) async {
@@ -18,12 +24,7 @@ class ProfileViewModel extends GetxController {
     }
     try {
       await FirestoreService.updateProfilePic(authUser.uid, imageUrl!);
-
-      if (firebaseUser != null) {
-        firebaseUser!.profilePic = imageUrl;
-      }
-
-      update();
+      fetchUserData(); // Fetch updated user data after profile picture is uploaded
       return UploadResponse(success: true, message: imageUrl);
     } catch (e) {
       print(e);
@@ -31,21 +32,13 @@ class ProfileViewModel extends GetxController {
     }
   }
 
-  Future<myUser?> fetchUserData() async {
+  // Function to fetch user data
+  Future<void> fetchUserData() async {
     try {
-      // Fetch the user object from FirestoreService and assign it to firebaseUser
-      firebaseUser = await FirestoreService.fetchUserData(authUser.uid);
-
-      if (firebaseUser != null) {
-        print("User fetched: ${firebaseUser!.name}");
-        refresh();
-        update();
-        return firebaseUser;
-      }
-      return null;
+      final fetchedUser = await FirestoreService.fetchUserData(authUser.uid);
+      firebaseUser.value = fetchedUser!;
     } catch (e) {
       print("Error fetching user data: $e");
-      return null;
     }
   }
 
@@ -53,16 +46,23 @@ class ProfileViewModel extends GetxController {
     try {
       await FirestoreService.updateUserProfile(
           uid: authUser.uid, name: name, bio: bio);
-      if (firebaseUser != null) {
-        firebaseUser!.name = name;
-        firebaseUser!.bio = bio;
-        update();
-        return true;
-      }
-      return false;
+      firebaseUser.value.name = name;
+      firebaseUser.value.bio = bio;
+      update();
+      return true;
     } catch (e) {
       print("Error updating user data: $e");
       return false;
+    }
+  }
+
+  void followUser(posterId, posterUid) async {
+    try {
+      await FirestoreService.followUser(
+          authUser.uid, authUser.email, posterId, posterUid);
+      update();
+    } catch (e) {
+      print("Error following user: $e");
     }
   }
 }

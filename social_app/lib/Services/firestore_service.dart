@@ -3,6 +3,7 @@ import 'package:social_app/Models/my_user.dart';
 
 import '../Constants/Constants.dart';
 import '../Models/Post.dart';
+import '../Models/auth_user.dart';
 
 class FirestoreService {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -87,10 +88,44 @@ class FirestoreService {
     }
   }
 
-  static Future<List<Post>> fetchPosts() async {
+  static Future<List<Post>> fetchPosts(List<String> followedUserIds) async {
     try {
-      QuerySnapshot snapshot =
-          await posts.orderBy('date', descending: true).get();
+      final snapshot =
+          await posts.where("posterId", whereIn: followedUserIds).get();
+
+      return snapshot.docs
+          .map((e) => Post.fromJson(e.data() as Map<String, dynamic>))
+          .toList();
+    } catch (e) {
+      print(e);
+      return [];
+    }
+  }
+
+  static Future<void> followUser(
+      String uid, String email, posterId, posterUid) async {
+    await users.doc(uid).update({
+      'followingList': FieldValue.arrayUnion([posterId]),
+    });
+    await users.doc(posterUid).update({
+      'followersList': FieldValue.arrayUnion([email]),
+    });
+  }
+
+  static Future<void> likePost(Post post, AuthUser user) async {
+    try {
+      await posts.doc(post.id).update({
+        'likes': post.likes + 1,
+        'likesList': FieldValue.arrayUnion([user.email]),
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  static Future<List<Post>> fetchAllPosts() async {
+    try {
+      final snapshot = await posts.get();
       return snapshot.docs
           .map((e) => Post.fromJson(e.data() as Map<String, dynamic>))
           .toList();
