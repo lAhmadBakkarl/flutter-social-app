@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:social_app/Models/my_user.dart';
-
 import '../Constants/Constants.dart';
 import '../Models/Post.dart';
 import '../Models/auth_user.dart';
@@ -155,5 +154,35 @@ class FirestoreService {
       print(e);
       return Future.error(e);
     }
+  }
+
+  static void unfollowUser(
+      String uid, String email, String postedId, String posterUid) {
+    users.doc(uid).update({
+      'followingList': FieldValue.arrayRemove([postedId]),
+    });
+    users.doc(posterUid).update({
+      'followersList': FieldValue.arrayRemove([email]),
+    });
+  }
+
+  static Future<List<Post>> fetchUserPosts(String uid) async {
+    try {
+      final snapshot = await posts.where("posterUid", isEqualTo: uid).get();
+      return snapshot.docs
+          .map((e) => Post.fromJson(e.data() as Map<String, dynamic>))
+          .toList();
+    } catch (e) {
+      print(e);
+      return [];
+    }
+  }
+
+  static void unfollowUserFromList(
+      String uid, String email, String followedEmail) {
+    users.doc(uid).update({
+      'followingList': FieldValue.arrayRemove([followedEmail]),
+    });
+    //
   }
 }

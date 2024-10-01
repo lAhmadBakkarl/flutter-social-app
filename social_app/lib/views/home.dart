@@ -1,15 +1,17 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:social_app/Constants/AppColors.dart';
 import 'package:social_app/Constants/Constants.dart';
+import 'package:social_app/Models/Post.dart';
 import 'package:social_app/Models/auth_user.dart';
 import 'package:social_app/Widgets/post.dart';
 import 'package:social_app/Widgets/text_field.dart';
 import 'package:social_app/view_models/auth_view_model.dart';
 import 'package:social_app/view_models/home_view_model.dart';
 import 'package:social_app/view_models/profile_view_model.dart';
+import 'package:social_app/views/user_profile.dart';
 import 'Profile.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
@@ -133,6 +135,12 @@ class Home extends StatelessWidget {
                         } else {
                           homeController.likePost(post, AuthUser());
                         }
+                      },
+                      onUserTap: () async {
+                        final postUserUid = post.posterUid;
+                        await profileController.fetchUser(postUserUid);
+                        await homeController.fetchUserPosts(postUserUid);
+                        Get.to(() => const UserProfilePage());
                       },
                       onComment: () {
                         showDialog(

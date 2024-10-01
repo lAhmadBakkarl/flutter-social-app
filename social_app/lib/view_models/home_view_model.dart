@@ -11,6 +11,7 @@ import 'package:intl/intl.dart';
 class HomeViewModel extends GetxController {
   var posts = <Post>[].obs;
   var allPosts = <Post>[].obs;
+  var userPosts = <Post>[].obs;
   final String formattedDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
   var isliked = false.obs;
   var likesList = <String>[].obs;
@@ -49,10 +50,10 @@ class HomeViewModel extends GetxController {
     String? videoUrl;
     try {
       if (postPhoto != null) {
-        imageUrl = await FileUpload.uploadFile(File(postPhoto.path));
+        imageUrl = await FileUpload.uploadFile(File(postPhoto.path), true);
       }
       if (postVideo != null) {
-        videoUrl = await FileUpload.uploadFile(File(postVideo));
+        videoUrl = await FileUpload.uploadFile(File(postVideo), true);
       }
 
       final newPost = Post(
@@ -130,6 +131,16 @@ class HomeViewModel extends GetxController {
     } catch (e) {
       print(e);
       return Future.error(e);
+    }
+  }
+
+  Future<void> fetchUserPosts(uid) async {
+    try {
+      final fetchedPosts = await FirestoreService.fetchUserPosts(uid);
+      userPosts.assignAll(fetchedPosts);
+      userPosts.refresh();
+    } catch (e) {
+      print(e);
     }
   }
 }

@@ -3,11 +3,17 @@ import 'package:firebase_storage/firebase_storage.dart';
 import '../Models/auth_user.dart';
 
 class FileUpload {
-  static Future<String> uploadFile(File postFile) async {
+  static Future<String> uploadFile(File postFile, bool isPost) async {
     final AuthUser authUser = AuthUser();
+
+    String fileName = 'users_images/' + authUser.uid;
+    if (isPost) {
+      fileName =
+          'posts_images/' + DateTime.now().millisecondsSinceEpoch.toString();
+    }
+
     try {
-      final storageRef =
-          FirebaseStorage.instance.ref().child('users_images/${authUser.uid}');
+      final storageRef = FirebaseStorage.instance.ref().child(fileName);
 
       // Start the upload task
       final uploadFile = storageRef.putFile(postFile);

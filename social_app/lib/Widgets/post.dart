@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:social_app/Models/my_user.dart';
 import '../Constants/AppColors.dart';
@@ -8,6 +10,7 @@ class PostTile extends StatelessWidget {
   final VoidCallback? onLike;
   final VoidCallback? onComment;
   final VoidCallback? onFollow;
+  final Function()? onUserTap;
   final myUser? user;
 
   const PostTile(
@@ -16,6 +19,7 @@ class PostTile extends StatelessWidget {
       this.onLike,
       this.onComment,
       this.onFollow,
+      this.onUserTap,
       required this.user});
 
   @override
@@ -39,9 +43,12 @@ class PostTile extends StatelessWidget {
           // else
           Container(
             width: availableWidth * 0.15,
-            child: const Icon(
-              Icons.person,
-              size: 50,
+            child: IconButton(
+              icon: const Icon(
+                Icons.person,
+                size: 50,
+              ),
+              onPressed: onUserTap,
             ),
           ),
 

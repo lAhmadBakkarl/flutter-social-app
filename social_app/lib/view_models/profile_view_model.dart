@@ -10,6 +10,7 @@ class ProfileViewModel extends GetxController {
   var firebaseUser = myUser().obs;
   final AuthUser authUser = AuthUser();
   var isUploading = false.obs;
+  var appUser = myUser().obs;
 
   @override
   void onInit() {
@@ -21,7 +22,7 @@ class ProfileViewModel extends GetxController {
     String? imageUrl;
     if (imageFile != null) {
       isUploading.value = true;
-      imageUrl = await FileUpload.uploadFile(imageFile);
+      imageUrl = await FileUpload.uploadFile(imageFile, false);
       isUploading.value = false;
     }
     try {
@@ -39,8 +40,20 @@ class ProfileViewModel extends GetxController {
   Future<void> fetchUserData() async {
     try {
       final fetchedUser = await FirestoreService.fetchUserData(authUser.uid);
+
       if (fetchedUser != null) {
         firebaseUser.value = fetchedUser;
+      }
+    } catch (e) {
+      print("Error fetching user data: $e");
+    }
+  }
+
+  Future<void> fetchUser(String uid) async {
+    try {
+      final fetchedUser = await FirestoreService.fetchUserData(uid);
+      if (fetchedUser != null) {
+        appUser.value = fetchedUser;
       }
     } catch (e) {
       print("Error fetching user data: $e");
@@ -66,10 +79,35 @@ class ProfileViewModel extends GetxController {
     try {
       await FirestoreService.followUser(
           authUser.uid, authUser.email, posterId, posterUid);
-      // Optionally update the local user data after the follow
       fetchUserData();
+      fetchUser(posterUid);
+      firebaseUser.refresh();
+      appUser.refresh();
     } catch (e) {
       print("Error following user: $e");
+    }
+  }
+
+  void unfollowUser(String postedId, String posterUid) {
+    try {
+      FirestoreService.unfollowUser(
+          authUser.uid, authUser.email, postedId, posterUid);
+      fetchUserData();
+      fetchUser(posterUid);
+      firebaseUser.refresh();
+      appUser.refresh();
+    } catch (e) {
+      print("Error unfollowing user: $e");
+    }
+  }
+
+  void unfollowUserFromList(String followedEmail) {
+    try {
+      FirestoreService.unfollowUserFromList(
+          authUser.uid, authUser.email, followedEmail);
+      fetchUserData();
+    } catch (e) {
+      print("Error unfollowing user: $e");
     }
   }
 }
