@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:social_app/Models/Post.dart';
 import 'package:social_app/Models/auth_user.dart';
+import 'package:social_app/Models/comment.dart';
+import 'package:social_app/Models/my_user.dart';
 import 'package:social_app/helpers/image_upload.dart';
 import 'package:social_app/view_models/profile_view_model.dart';
 import '../Services/firestore_service.dart';
@@ -12,7 +14,8 @@ class HomeViewModel extends GetxController {
   var posts = <Post>[].obs;
   var allPosts = <Post>[].obs;
   var userPosts = <Post>[].obs;
-  final String formattedDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
+  final String formattedDate =
+      DateFormat('HH:mm dd-MM-yyyy').format(DateTime.now());
   var isliked = false.obs;
   var likesList = <String>[].obs;
   var commentsList = <String>[].obs;
@@ -117,17 +120,33 @@ class HomeViewModel extends GetxController {
   Future<void> fetchAllPosts() async {
     try {
       final fetchedPosts = await FirestoreService.fetchAllPosts();
+
+      for (var post in fetchedPosts) {
+        final comments = await FirestoreService.fetchComments(post.id);
+        post.commentsList = comments;
+      }
+
       allPosts.assignAll(fetchedPosts);
+      allPosts.refresh();
     } catch (e) {
-      print(e);
+      print('Error fetching posts or comments: $e');
     }
   }
 
-  Future<void> commentPost(Post post, AuthUser authUser, String text) async {
+  Future<void> commentPost(Post post, myUser user, String text) async {
     try {
-      await FirestoreService.commentPost(post, authUser, text);
+      final newComment = Comment(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        comment: text,
+        user: user,
+        date: formattedDate,
+      );
+
+      await FirestoreService.commentPost(newComment, post);
+      post.commentsList.add(newComment);
       posts.refresh();
       allPosts.refresh();
+      userPosts.refresh();
     } catch (e) {
       print(e);
       return Future.error(e);

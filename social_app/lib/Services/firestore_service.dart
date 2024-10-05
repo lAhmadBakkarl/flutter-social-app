@@ -3,6 +3,7 @@ import 'package:social_app/Models/my_user.dart';
 import '../Constants/Constants.dart';
 import '../Models/Post.dart';
 import '../Models/auth_user.dart';
+import '../Models/comment.dart';
 
 class FirestoreService {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -123,10 +124,20 @@ class FirestoreService {
 
   static Future<List<Post>> fetchAllPosts() async {
     try {
+      // Step 1: Fetch all posts
       final snapshot = await posts.get();
-      return snapshot.docs
-          .map((e) => Post.fromJson(e.data() as Map<String, dynamic>))
-          .toList();
+
+      List<Post> postsList = await Future.wait(
+        snapshot.docs.map((doc) async {
+          Post post = Post.fromJson(doc.data() as Map<String, dynamic>);
+
+          post.commentsList = await fetchComments(doc.id);
+
+          return post;
+        }).toList(),
+      );
+
+      return postsList;
     } catch (e) {
       print(e);
       return [];
@@ -143,16 +154,15 @@ class FirestoreService {
     }
   }
 
-  static Future<void> commentPost(
-      Post post, AuthUser authUser, String comment) {
+  static Future<void> commentPost(comment, post) async {
+    final CollectionReference comments = FirebaseFirestore.instance
+        .collection(postsCollection)
+        .doc(post.id)
+        .collection(commentsCollection);
     try {
-      posts.doc(post.id).update({
-        'commentsList': FieldValue.arrayUnion([comment]),
-      });
-      return Future.value();
+      await comments.doc().set(comment.toJson());
     } catch (e) {
       print(e);
-      return Future.error(e);
     }
   }
 
@@ -184,5 +194,22 @@ class FirestoreService {
       'followingList': FieldValue.arrayRemove([followedEmail]),
     });
     //
+  }
+
+  static Future<List<Comment>> fetchComments(String postId) async {
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection(postsCollection)
+          .doc(postId)
+          .collection(commentsCollection)
+          .get();
+
+      return snapshot.docs
+          .map((doc) => Comment.fromJson(doc.data() as Map<String, dynamic>))
+          .toList();
+    } catch (e) {
+      print('Error fetching comments: $e');
+      return [];
+    }
   }
 }

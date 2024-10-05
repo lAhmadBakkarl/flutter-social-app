@@ -30,6 +30,8 @@ class ProfileViewModel extends GetxController {
       firebaseUser.update((user) {
         user?.profilePic = imageUrl;
       });
+      appUser.refresh();
+      firebaseUser.refresh();
       return UploadResponse(success: true, message: imageUrl);
     } catch (e) {
       print(e);

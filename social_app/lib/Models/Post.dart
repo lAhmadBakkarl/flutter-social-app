@@ -1,10 +1,12 @@
+import 'package:social_app/Models/comment.dart';
+
 class Post {
   String id;
   String? text;
   int likes = 0;
   List<String> likesList = [];
   int comments = 0;
-  List<String> commentsList = [];
+  List<Comment> commentsList = [];
   String? postPhoto;
   String? postVideo;
   String posterId;
@@ -36,7 +38,9 @@ class Post {
       date: json['date'] as String,
       posterUid: json['posterUid'] as String,
       likesList: (json['likesList'] as List<dynamic>).cast<String>(),
-      commentsList: (json['commentsList'] as List<dynamic>).cast<String>(),
+      commentsList: (json['commentsList'] as List<dynamic>)
+          .map((comment) => Comment.fromJson(comment))
+          .toList(),
     );
   }
 

@@ -1,10 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:social_app/Constants/AppColors.dart';
 import 'package:social_app/Constants/Constants.dart';
-import 'package:social_app/Models/Post.dart';
 import 'package:social_app/Models/auth_user.dart';
 import 'package:social_app/Widgets/post.dart';
 import 'package:social_app/Widgets/text_field.dart';
@@ -161,7 +159,7 @@ class Home extends StatelessWidget {
                               TextButton(
                                 onPressed: () {
                                   homeController.commentPost(
-                                      post, AuthUser(), commentText.text);
+                                      post, user, commentText.text);
                                   commentText.clear();
                                   Navigator.of(context).pop();
                                 },

@@ -4,6 +4,8 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 const String usersCollection = "Users";
 const String postsCollection = "Posts";
+const String commentsCollection = "Comments";
+const String likesCollection = "Likes";
 
 void showSnackBar(String title, String message, bool success, duration) {
   Get.snackbar(title, message,

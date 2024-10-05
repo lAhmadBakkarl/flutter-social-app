@@ -248,8 +248,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                         ),
                                         TextButton(
                                           onPressed: () {
-                                            homeController.commentPost(post,
-                                                AuthUser(), commentText.text);
+                                            homeController.commentPost(
+                                                post, user, commentText.text);
                                             commentText.clear();
                                             Navigator.of(context).pop();
                                           },
